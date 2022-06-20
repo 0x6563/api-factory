@@ -1,7 +1,7 @@
 /// <reference types="node" />
-export type {} from '../node_modules/typescript/lib/lib.dom';
 import { ServerOptions } from "https";
 import { API } from "./api";
+import { APIResponse, APIRequest } from './server';
 export interface ServerConfig {
     routes: Routes;
     port: number;
@@ -23,22 +23,6 @@ export declare type CORS = true | {
 };
 export interface HttpError extends Error {
     response: Partial<APIResponse>;
-}
-export interface APIRequest<U = undefined> {
-    method: string;
-    url: string;
-    path: string;
-    pathParameters: HttpStringMap;
-    query: HttpStringMapMulti;
-    headers: HttpStringMap;
-    body?: string;
-    json?: any;
-    user: U;
-}
-export interface APIResponse {
-    statusCode?: number;
-    headers?: HttpStringMap;
-    body?: any;
 }
 export declare type APIRequestTransform = (request: APIRequest) => APIRequest;
 export declare type HttpStringMapMulti = {
@@ -67,10 +51,9 @@ declare type GetUserTypes<T> = T extends {
 declare type PromiseResult<T> = T extends Promise<infer U> ? U : T;
 export declare type Promiseable<T> = Promise<T> | T;
 export interface APIFactoryConfig {
-    responseType?: 'simple' | 'full';
     authentication?: readonly APIAuthentication[];
-    jsonBody?: boolean;
 }
 export interface Constructor<T> {
     new (): T;
 }
+export {};

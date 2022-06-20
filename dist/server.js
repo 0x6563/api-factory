@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Server = void 0;
+exports.APIResponse = exports.APIRequest = exports.Server = void 0;
 const express_1 = __importDefault(require("express"));
 const https_1 = require("https");
 const api_1 = require("./api");
@@ -29,7 +29,6 @@ function Server(config) {
 }
 exports.Server = Server;
 const DefaultAPIFactoryConfig = {
-    responseType: 'simple',
     authentication: [],
 };
 function Invoke(API) {
@@ -37,15 +36,12 @@ function Invoke(API) {
         const api = new API();
         const config = Object.assign({}, DefaultAPIFactoryConfig, api.config);
         const { method, url, path, params: pathParameters, query, headers, body } = req;
-        const request = { method, url, path, pathParameters, query, headers, body, };
-        if (config.jsonBody) {
-            request.json = TryJSON(request.body);
-        }
+        const request = new APIRequest({ method, url, path, pathParameters, query, headers, body, user: undefined });
         let response;
         try {
             request.user = await Authenticate(request, config.authentication);
             const result = await api.run(request);
-            response = config.responseType == 'simple' ? { body: result } : result;
+            response = !APIResponse.IsResponse(result) ? { body: result } : result;
         }
         catch (error) {
             if (typeof api.onError == 'function') {
@@ -59,14 +55,6 @@ function Invoke(API) {
         ResponseSetHeaders(resp, response.headers);
         ResponseSetBody(resp, response.body);
     });
-}
-function TryJSON(body) {
-    try {
-        return JSON.parse(body);
-    }
-    catch (error) {
-        return body;
-    }
 }
 function ErrorResponse(error) {
     return 'response' in error ? error.response : (0, api_1.HttpError)(error);
@@ -97,5 +85,58 @@ function ResponseSetHeaders(resp, headers = {}) {
 }
 function ResponseSetBody(resp, body = '') {
     resp.send(typeof body == 'string' ? body : JSON.stringify(body));
+}
+class APIRequest {
+    method;
+    url;
+    path;
+    pathParameters;
+    query;
+    headers;
+    body;
+    user;
+    constructor({ method, url, path, pathParameters, query, headers, body }) {
+        this.method = method;
+        this.url = url;
+        this.path = path;
+        this.pathParameters = pathParameters;
+        this.query = query;
+        this.headers = headers;
+        this.body = body;
+    }
+    $json = new Cachable();
+    get json() {
+        if (this.$json.isCached)
+            return this.$json.data;
+        try {
+            this.$json.data = JSON.parse(this.body);
+        }
+        catch (error) {
+            console.log(error);
+        }
+        this.$json.isCached = true;
+        return this.$json;
+    }
+}
+exports.APIRequest = APIRequest;
+class APIResponse {
+    static $ = Symbol('Response');
+    static IsResponse(response) {
+        return response.$ === APIResponse.$;
+    }
+    $ = APIResponse.$;
+    body = '';
+    statusCode = 200;
+    headers = {};
+    constructor({ statusCode, headers, body }) {
+        this.statusCode = statusCode ?? 200;
+        this.headers = headers ?? {};
+        this.body = body ?? '';
+    }
+}
+exports.APIResponse = APIResponse;
+class Cachable {
+    isCached = false;
+    data;
 }
 //# sourceMappingURL=server.js.map

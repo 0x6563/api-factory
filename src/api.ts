@@ -1,4 +1,5 @@
-import { APICallback, APIFactoryConfig, APIResponse, APIRequestT, APIResponseT, Constructor, HttpError, HttpStringMap, Promiseable } from "./typings";
+import { APIResponse } from "./server";
+import { APICallback, APIFactoryConfig, APIRequestT, APIResponseT, Constructor, HttpError, HttpStringMap, Promiseable } from "./typings";
 
 export abstract class API<T extends APIFactoryConfig = {}> {
     abstract readonly config: T;
@@ -29,7 +30,7 @@ export function HttpError(a: Error | number | string, b?: APIResponse | HttpStri
         response = {
             statusCode: a,
             headers: b as any || {},
-            body: typeof c == 'undefined' ? `${a} Error` : c
+            body: c ?? `${a} Error`
         }
     } else if (typeof a == 'string') {
         response = {
@@ -38,8 +39,8 @@ export function HttpError(a: Error | number | string, b?: APIResponse | HttpStri
             body: a
         }
     }
-    response = typeof response != 'undefined' ? response : { statusCode: 500, headers: {}, body: '500 Error' };
-    error = typeof error != 'undefined' ? error : new Error(response.body);
+    response = response ?? { statusCode: 500, headers: {}, body: '500 Error' };
+    error = error ?? new Error(response.body);
     (error as HttpError).response = response;
     return error as HttpError;
 }

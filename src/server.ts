@@ -1,7 +1,6 @@
 import express from "express";
 import { createServer, Server as HTTPSServer } from 'https';
-import { Response } from "express-serve-static-core";
-import { APIAuthentication, APIFactoryConfig, APIRequest, APIResponse, APIUser, Constructor, HttpStringMap, ServerConfig } from './typings';
+import { APIAuthentication, APIFactoryConfig, APIUser, Constructor, HttpStringMap, HttpStringMapMulti, ServerConfig } from './typings';
 import { API, HttpError } from './api';
 import { Server as HTTPServer } from 'http';
 
@@ -30,7 +29,6 @@ export function Server(config: ServerConfig): Promise<HTTPServer | HTTPSServer> 
 }
 
 const DefaultAPIFactoryConfig: Partial<APIFactoryConfig> = {
-    responseType: 'simple',
     authentication: [],
 }
 
@@ -39,15 +37,12 @@ function Invoke(API: Constructor<API<any>>) {
         const api = new API();
         const config = Object.assign({}, DefaultAPIFactoryConfig, api.config);
         const { method, url, path, params: pathParameters, query, headers, body } = req;
-        const request: APIRequest = { method, url, path, pathParameters, query, headers, body, } as any;
-        if (config.jsonBody) {
-            request.json = TryJSON(request.body);
-        }
+        const request: APIRequest = new APIRequest({ method, url, path, pathParameters, query, headers, body, user: undefined } as any);
         let response: APIResponse;
         try {
             (request as any).user = await Authenticate(request, config.authentication);
             const result = await api.run(request as any);
-            response = config.responseType == 'simple' ? { body: result } : result;
+            response = !APIResponse.IsResponse(result) ? { body: result } : result;
         } catch (error: any) {
             if (typeof api.onError == 'function') {
                 response = (await api.onError(request as any, error)) || ErrorResponse(error);
@@ -60,14 +55,6 @@ function Invoke(API: Constructor<API<any>>) {
         ResponseSetHeaders(resp, response.headers);
         ResponseSetBody(resp, response.body);
     });
-}
-
-function TryJSON(body?: string) {
-    try {
-        return JSON.parse(body);
-    } catch (error) {
-        return body;
-    }
 }
 
 function ErrorResponse(error: any) {
@@ -88,11 +75,11 @@ async function Authenticate(request: APIRequest, authentication?: readonly APIAu
     }
 }
 
-function ResponseSetStatusCode(resp: Response<any>, statusCode: number = 200) {
+function ResponseSetStatusCode(resp: ExpressResponse, statusCode: number = 200) {
     resp.statusCode = statusCode;
 }
 
-function ResponseSetHeaders(resp: Response<any>, headers: HttpStringMap = {}) {
+function ResponseSetHeaders(resp: ExpressResponse, headers: HttpStringMap = {}) {
     for (const key in headers) {
         const values: any[] = (Array.isArray(headers[key]) ? headers[key] : [headers[key]]) as any[];
         for (const value of values) {
@@ -101,6 +88,66 @@ function ResponseSetHeaders(resp: Response<any>, headers: HttpStringMap = {}) {
     }
 }
 
-function ResponseSetBody(resp: Response<any>, body: string = '') {
+function ResponseSetBody(resp: ExpressResponse, body: string = '') {
     resp.send(typeof body == 'string' ? body : JSON.stringify(body));
 }
+
+export class APIRequest<T = undefined>  {
+    method: string;
+    url: string;
+    path: string;
+    pathParameters: HttpStringMap;
+    query: HttpStringMapMulti;
+    headers: HttpStringMap;
+    body?: string;
+    user: T;
+
+    constructor({ method, url, path, pathParameters, query, headers, body }: APIRequest) {
+        this.method = method;
+        this.url = url;
+        this.path = path;
+        this.pathParameters = pathParameters;
+        this.query = query;
+        this.headers = headers;
+        this.body = body;
+    }
+
+    private $json = new Cachable();
+    get json() {
+        if (this.$json.isCached)
+            return this.$json.data;
+        try {
+            this.$json.data = JSON.parse(this.body);
+        } catch (error) {
+            console.log(error);
+        }
+        this.$json.isCached = true;
+        return this.$json;
+    }
+}
+
+export class APIResponse {
+    protected static $: Symbol = Symbol('Response');
+    static IsResponse(response: APIResponse) {
+        return response.$ === APIResponse.$;
+    }
+
+    private $? = APIResponse.$;
+    body?: string = '';
+    statusCode?: number = 200;
+    headers?: HttpStringMap = {};
+    constructor({ statusCode, headers, body }: APIResponse) {
+        this.statusCode = statusCode ?? 200;
+        this.headers = headers ?? {};
+        this.body = body ?? '';
+    }
+}
+
+class Cachable {
+    isCached = false;
+    data;
+}
+
+type ExpressResponse = any;
+
+

@@ -1,4 +1,5 @@
-import { APICallback, APIFactoryConfig, APIResponse, APIRequestT, APIResponseT, Constructor, HttpError, HttpStringMap, Promiseable } from "./typings";
+import { APIResponse } from "./server";
+import { APICallback, APIFactoryConfig, APIRequestT, APIResponseT, Constructor, HttpError, HttpStringMap, Promiseable } from "./typings";
 export declare abstract class API<T extends APIFactoryConfig = {}> {
     abstract readonly config: T;
     constructor();

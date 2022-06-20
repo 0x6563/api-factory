@@ -1,4 +1,5 @@
-import { APIAuthentication, APIRequest } from "../typings";
+import { APIRequest } from "../server";
+import { APIAuthentication } from "../typings";
 export declare class GitHubOAuth implements APIAuthentication {
     private config;
     private prefix;

@@ -1,8 +1,6 @@
-
-export type { } from '../node_modules/typescript/lib/lib.dom';
-
 import { ServerOptions } from "https";
 import { API } from "./api";
+import { APIResponse, APIRequest } from './server'
 
 export interface ServerConfig {
     routes: Routes;
@@ -31,25 +29,6 @@ export interface HttpError extends Error {
     response: Partial<APIResponse>;
 }
 
-export interface APIRequest<U = undefined> {
-    method: string;
-    url: string;
-    path: string;
-    pathParameters: HttpStringMap;
-    query: HttpStringMapMulti;
-    headers: HttpStringMap;
-    body?: string;
-    json?: any;
-    user: U;
-}
-
-export interface APIResponse {
-    statusCode?: number;
-    headers?: HttpStringMap;
-    body?: any;
-}
-
-
 export type APIRequestTransform = (request: APIRequest) => APIRequest;
 export type HttpStringMapMulti = { [key: string]: string | string[] };
 export type HttpStringMap = { [key: string]: string };
@@ -75,9 +54,7 @@ type PromiseResult<T> = T extends Promise<infer U> ? U : T;
 export type Promiseable<T> = Promise<T> | T;
 
 export interface APIFactoryConfig {
-    responseType?: 'simple' | 'full'; // 'streaming'
     authentication?: readonly APIAuthentication[];
-    jsonBody?: boolean;
 }
 
 export interface Constructor<T> {

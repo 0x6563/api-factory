@@ -23,7 +23,7 @@ function HttpError(a, b, c) {
         response = {
             statusCode: a,
             headers: b || {},
-            body: typeof c == 'undefined' ? `${a} Error` : c
+            body: c ?? `${a} Error`
         };
     }
     else if (typeof a == 'string') {
@@ -33,8 +33,8 @@ function HttpError(a, b, c) {
             body: a
         };
     }
-    response = typeof response != 'undefined' ? response : { statusCode: 500, headers: {}, body: '500 Error' };
-    error = typeof error != 'undefined' ? error : new Error(response.body);
+    response = response ?? { statusCode: 500, headers: {}, body: '500 Error' };
+    error = error ?? new Error(response.body);
     error.response = response;
     return error;
 }

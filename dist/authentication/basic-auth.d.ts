@@ -1,4 +1,5 @@
-import { APIAuthentication, APIRequest, Promiseable } from "../typings";
+import { APIRequest } from "../server";
+import { APIAuthentication, Promiseable } from "../typings";
 export declare class BasicAuth<T> implements APIAuthentication {
     private config;
     constructor(config: {
