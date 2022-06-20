@@ -16,8 +16,6 @@ export abstract class API<T extends APIFactoryConfig = {}> {
 
 export const APIFactory = API.Factory;
 
-
-
 export function HttpError(body: string): HttpError;
 export function HttpError(error: Error, response?: APIResponse): HttpError;
 export function HttpError(statusCode: number, headers: HttpStringMap, body: string): HttpError;

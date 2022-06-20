@@ -32,6 +32,7 @@ export interface APIRequest<U = undefined> {
     query: HttpStringMapMulti;
     headers: HttpStringMap;
     body?: string;
+    json?: any;
     user: U;
 }
 export interface APIResponse {
@@ -68,6 +69,7 @@ export declare type Promiseable<T> = Promise<T> | T;
 export interface APIFactoryConfig {
     responseType?: 'simple' | 'full';
     authentication?: readonly APIAuthentication[];
+    jsonBody?: boolean;
 }
 export interface Constructor<T> {
     new (): T;

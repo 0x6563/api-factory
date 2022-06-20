@@ -1,11 +1,14 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Server = void 0;
-const express = require("express");
+const express_1 = __importDefault(require("express"));
 const https_1 = require("https");
 const api_1 = require("./api");
 function Server(config) {
-    const app = express();
+    const app = (0, express_1.default)();
     const allowed = new Set(['get', 'post', 'delete', 'put', 'all']);
     for (const route of config.routes) {
         console.log();
@@ -15,7 +18,7 @@ function Server(config) {
             .map(v => v.toLowerCase().trim())
             .filter(v => allowed.has(v));
         for (const method of methods) {
-            app[method](route.path, express.text({ type: '*/*' }), Invoke(route.handler));
+            app[method](route.path, express_1.default.text({ type: '*/*' }), Invoke(route.handler));
         }
     }
     return new Promise((resolve) => {
@@ -35,12 +38,12 @@ function Invoke(API) {
         const config = Object.assign({}, DefaultAPIFactoryConfig, api.config);
         const { method, url, path, params: pathParameters, query, headers, body } = req;
         const request = { method, url, path, pathParameters, query, headers, body, };
+        if (config.jsonBody) {
+            request.json = TryJSON(request.body);
+        }
         let response;
         try {
-            const user = await Authenticate(request, config.authentication);
-            if (user) {
-                request.user = user;
-            }
+            request.user = await Authenticate(request, config.authentication);
             const result = await api.run(request);
             response = config.responseType == 'simple' ? { body: result } : result;
         }
@@ -49,7 +52,6 @@ function Invoke(API) {
                 response = (await api.onError(request, error)) || ErrorResponse(error);
             }
             else {
-                console.log('b');
                 response = ErrorResponse(error);
             }
         }
@@ -57,6 +59,14 @@ function Invoke(API) {
         ResponseSetHeaders(resp, response.headers);
         ResponseSetBody(resp, response.body);
     });
+}
+function TryJSON(body) {
+    try {
+        return JSON.stringify(body);
+    }
+    catch (error) {
+        return body;
+    }
 }
 function ErrorResponse(error) {
     return 'response' in error ? error.response : (0, api_1.HttpError)(error);

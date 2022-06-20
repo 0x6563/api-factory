@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from "express";
 import { createServer, Server as HTTPSServer } from 'https';
 import { Response } from "express-serve-static-core";
 import { APIAuthentication, APIFactoryConfig, APIRequest, APIResponse, APIUser, Constructor, HttpStringMap, ServerConfig } from './typings';
@@ -40,19 +40,18 @@ function Invoke(API: Constructor<API<any>>) {
         const config = Object.assign({}, DefaultAPIFactoryConfig, api.config);
         const { method, url, path, params: pathParameters, query, headers, body } = req;
         const request: APIRequest = { method, url, path, pathParameters, query, headers, body, } as any;
+        if (config.jsonBody) {
+            request.json = TryJSON(request.body);
+        }
         let response: APIResponse;
         try {
-            const user = await Authenticate(request, config.authentication);
-            if (user) {
-                (request as any).user = user;
-            }
+            (request as any).user = await Authenticate(request, config.authentication);
             const result = await api.run(request as any);
             response = config.responseType == 'simple' ? { body: result } : result;
         } catch (error: any) {
             if (typeof api.onError == 'function') {
                 response = (await api.onError(request as any, error)) || ErrorResponse(error);
             } else {
-                console.log('b');
                 response = ErrorResponse(error);
             }
         }
@@ -61,6 +60,14 @@ function Invoke(API: Constructor<API<any>>) {
         ResponseSetHeaders(resp, response.headers);
         ResponseSetBody(resp, response.body);
     });
+}
+
+function TryJSON(body?: string) {
+    try {
+        return JSON.stringify(body);
+    } catch (error) {
+        return body;
+    }
 }
 
 function ErrorResponse(error: any) {

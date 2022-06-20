@@ -39,6 +39,7 @@ export interface APIRequest<U = undefined> {
     query: HttpStringMapMulti;
     headers: HttpStringMap;
     body?: string;
+    json?: any;
     user: U;
 }
 
@@ -73,10 +74,10 @@ type GetUserTypes<T> = T extends { authentication: APIAuthentication[] } ? NonNu
 type PromiseResult<T> = T extends Promise<infer U> ? U : T;
 export type Promiseable<T> = Promise<T> | T;
 
-
 export interface APIFactoryConfig {
     responseType?: 'simple' | 'full'; // 'streaming'
     authentication?: readonly APIAuthentication[];
+    jsonBody?: boolean;
 }
 
 export interface Constructor<T> {
