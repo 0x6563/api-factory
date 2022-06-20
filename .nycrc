@@ -1,0 +1,7 @@
+{
+    "recursive": true,
+    "require": [
+        "esbuild-runner/register",
+        "source-map-support/register"
+    ]
+}

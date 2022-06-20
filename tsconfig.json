@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "removeComments": true,
+    "outDir": "./dist",
+    "sourceMap": true,
+    "target": "ESNext",
+    "downlevelIteration": true,
+    "declaration": true,
+    "lib": [
+      "ES7",
+      "DOM"
+    ],
+    "types": [
+      "node",
+      "mocha"
+    ]
+  },
+  "include": [
+    "src/**/*",
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
+}
