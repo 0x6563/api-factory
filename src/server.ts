@@ -64,7 +64,7 @@ function Invoke(API: Constructor<API<any>>) {
 
 function TryJSON(body?: string) {
     try {
-        return JSON.stringify(body);
+        return JSON.parse(body);
     } catch (error) {
         return body;
     }

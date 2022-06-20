@@ -62,7 +62,7 @@ function Invoke(API) {
 }
 function TryJSON(body) {
     try {
-        return JSON.stringify(body);
+        return JSON.parse(body);
     }
     catch (error) {
         return body;
