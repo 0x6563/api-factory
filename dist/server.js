@@ -104,27 +104,27 @@ class APIRequest {
         this.headers = headers;
         this.body = body;
     }
-    $json = new Cachable();
+    #json = new Cachable();
     get json() {
-        if (this.$json.isCached)
-            return this.$json.data;
+        if (this.#json.isCached)
+            return this.#json.data;
         try {
-            this.$json.data = JSON.parse(this.body);
+            this.#json.data = JSON.parse(this.body);
         }
         catch (error) {
             console.log(error);
         }
-        this.$json.isCached = true;
-        return this.$json;
+        this.#json.isCached = true;
+        return this.#json;
     }
 }
 exports.APIRequest = APIRequest;
 class APIResponse {
-    static $ = Symbol('Response');
+    static #$Key = Symbol('Response');
     static IsResponse(response) {
-        return response.$ === APIResponse.$;
+        return response.#$key === APIResponse.#$Key;
     }
-    $ = APIResponse.$;
+    #$key = APIResponse.#$Key;
     body = '';
     statusCode = 200;
     headers = {};
