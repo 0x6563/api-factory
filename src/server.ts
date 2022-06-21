@@ -112,27 +112,27 @@ export class APIRequest<T = undefined>  {
         this.body = body;
     }
 
-    private $json = new Cachable();
+    #json = new Cachable();
     get json() {
-        if (this.$json.isCached)
-            return this.$json.data;
+        if (this.#json.isCached)
+            return this.#json.data;
         try {
-            this.$json.data = JSON.parse(this.body);
+            this.#json.data = JSON.parse(this.body);
         } catch (error) {
             console.log(error);
         }
-        this.$json.isCached = true;
-        return this.$json;
+        this.#json.isCached = true;
+        return this.#json;
     }
 }
 
 export class APIResponse {
-    protected static $: Symbol = Symbol('Response');
+    static #$Key: Symbol = Symbol('Response');
     static IsResponse(response: APIResponse) {
-        return response.$ === APIResponse.$;
+        return response.#$key === APIResponse.#$Key;
     }
 
-    private $? = APIResponse.$;
+    #$key?= APIResponse.#$Key;
     body?: string = '';
     statusCode?: number = 200;
     headers?: HttpStringMap = {};
