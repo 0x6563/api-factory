@@ -20,6 +20,7 @@ export declare class APIRequest<T = undefined> {
 export declare class APIResponse {
     #private;
     static IsResponse(response: APIResponse): boolean;
+    $key?: Symbol;
     body?: string;
     statusCode?: number;
     headers?: HttpStringMap;

@@ -129,10 +129,10 @@ export class APIRequest<T = undefined>  {
 export class APIResponse {
     static #$Key: Symbol = Symbol('Response');
     static IsResponse(response: APIResponse) {
-        return response.#$key === APIResponse.#$Key;
+        return response.$key === APIResponse.#$Key;
     }
 
-    #$key?= APIResponse.#$Key;
+    $key?= APIResponse.#$Key;
     body?: string = '';
     statusCode?: number = 200;
     headers?: HttpStringMap = {};

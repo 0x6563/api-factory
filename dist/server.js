@@ -122,9 +122,9 @@ exports.APIRequest = APIRequest;
 class APIResponse {
     static #$Key = Symbol('Response');
     static IsResponse(response) {
-        return response.#$key === APIResponse.#$Key;
+        return response.$key === APIResponse.#$Key;
     }
-    #$key = APIResponse.#$Key;
+    $key = APIResponse.#$Key;
     body = '';
     statusCode = 200;
     headers = {};
