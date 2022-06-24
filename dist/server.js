@@ -21,6 +21,7 @@ function Server(config) {
         for (const method of methods) {
             if (config.cors || route.cors) {
                 const corsConfig = typeof route.cors === 'object' ? route.cors : (typeof config.cors === 'object' ? config.cors : undefined);
+                app.options(route.path, (0, cors_1.default)(corsConfig));
                 app[method](route.path, (0, cors_1.default)(corsConfig), express_1.default.text({ type: '*/*' }), Invoke(route.handler));
             }
             else {

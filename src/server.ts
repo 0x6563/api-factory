@@ -20,6 +20,7 @@ export function Server(config: ServerConfig): Promise<HTTPServer | HTTPSServer> 
         for (const method of methods) {
             if (config.cors || route.cors) {
                 const corsConfig = typeof route.cors === 'object' ? route.cors : (typeof config.cors === 'object' ? config.cors : undefined);
+                app.options(route.path, cors(corsConfig));
                 app[method](route.path, cors(corsConfig), express.text({ type: '*/*' }), Invoke(route.handler) as any);
             } else {
                 app[method](route.path, express.text({ type: '*/*' }), Invoke(route.handler) as any);
