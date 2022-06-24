@@ -28,7 +28,7 @@ export class GitHubOAuth implements APIAuthentication {
         const token = (await response.text()).replace(/^.*(gho[^&]+)&.*$/, 'token $1');
         const g = await fetch('https://api.github.com/user', { headers: { 'Authorization': token } });
         const user = await g.json();
-        if (!user)
+        if (!(user?.id))
             return;
         return {
             type: 'GitHub' as const,
