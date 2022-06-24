@@ -19,9 +19,13 @@ export interface Route {
 
 export type Routes = Route[];
 export type CORS = true | {
-    origin?: string | string[];
-    acceptHeaders?: string[];
-    headers?: HttpStringMap;
+    origin?: Function | RegExp | boolean | string | string[];
+    methods?: string[];
+    allowedHeaders?: string[];
+    exposedHeaders?: string[];
+    credentials?: boolean;
+    maxAge?: number;
+    optionsSuccessStatus?: number;
 }
 
 

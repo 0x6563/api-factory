@@ -17,9 +17,13 @@ export interface Route {
 }
 export declare type Routes = Route[];
 export declare type CORS = true | {
-    origin?: string | string[];
-    acceptHeaders?: string[];
-    headers?: HttpStringMap;
+    origin?: Function | RegExp | boolean | string | string[];
+    methods?: string[];
+    allowedHeaders?: string[];
+    exposedHeaders?: string[];
+    credentials?: boolean;
+    maxAge?: number;
+    optionsSuccessStatus?: number;
 };
 export interface HttpError extends Error {
     response: Partial<APIResponse>;

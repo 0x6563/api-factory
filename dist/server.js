@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.APIResponse = exports.APIRequest = exports.Server = void 0;
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 const https_1 = require("https");
 const api_1 = require("./api");
 function Server(config) {
@@ -18,7 +19,13 @@ function Server(config) {
             .map(v => v.toLowerCase().trim())
             .filter(v => allowed.has(v));
         for (const method of methods) {
-            app[method](route.path, express_1.default.text({ type: '*/*' }), Invoke(route.handler));
+            if (config.cors || route.cors) {
+                const corsConfig = typeof route.cors === 'object' ? route.cors : (typeof config.cors === 'object' ? config.cors : undefined);
+                app[method](route.path, (0, cors_1.default)(corsConfig), express_1.default.text({ type: '*/*' }), Invoke(route.handler));
+            }
+            else {
+                app[method](route.path, express_1.default.text({ type: '*/*' }), Invoke(route.handler));
+            }
         }
     }
     return new Promise((resolve) => {

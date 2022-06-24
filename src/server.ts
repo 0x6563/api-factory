@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { createServer, Server as HTTPSServer } from 'https';
 import { APIAuthentication, APIFactoryConfig, APIUser, Constructor, HttpStringMap, HttpStringMapMulti, ServerConfig } from './typings';
 import { API, HttpError } from './api';
@@ -16,11 +17,16 @@ export function Server(config: ServerConfig): Promise<HTTPServer | HTTPSServer> 
             .map(v => v.toLowerCase().trim())
             .filter(v => allowed.has(v)) as any;
 
-
         for (const method of methods) {
-            app[method](route.path, express.text({ type: '*/*' }), Invoke(route.handler) as any);
+            if (config.cors || route.cors) {
+                const corsConfig = typeof route.cors === 'object' ? route.cors : (typeof config.cors === 'object' ? config.cors : undefined);
+                app[method](route.path, cors(corsConfig), express.text({ type: '*/*' }), Invoke(route.handler) as any);
+            } else {
+                app[method](route.path, express.text({ type: '*/*' }), Invoke(route.handler) as any);
+            }
         }
     }
+
     return new Promise((resolve) => {
         const result: { server: HTTPServer | HTTPSServer } = { server: undefined as any };
         const server = config.ssl ? createServer(config.ssl, app) : app;
