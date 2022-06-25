@@ -7,6 +7,7 @@ export interface ServerConfig {
     port: number;
     cors?: CORS;
     ssl?: ServerOptions;
+    authentication?: readonly Promiseable<APIAuthentication>[];
 }
 export interface Route {
     id: string;
@@ -50,12 +51,12 @@ declare type GetResponseType<T> = T extends {
     responseType: 'full';
 } ? Required<APIResponse> : any;
 declare type GetUserTypes<T> = T extends {
-    authentication: APIAuthentication[];
-} ? NonNullable<PromiseResult<ReturnType<T["authentication"][number]["authenticate"]>>> : undefined;
+    authentication: Promiseable<APIAuthentication>[];
+} ? NonNullable<PromiseResult<ReturnType<PromiseResult<T["authentication"][number]>["authenticate"]>>> : undefined;
 declare type PromiseResult<T> = T extends Promise<infer U> ? U : T;
 export declare type Promiseable<T> = Promise<T> | T;
 export interface APIFactoryConfig {
-    authentication?: readonly APIAuthentication[];
+    authentication?: readonly Promiseable<APIAuthentication>[];
 }
 export interface Constructor<T> {
     new (): T;

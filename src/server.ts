@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { createServer, Server as HTTPSServer } from 'https';
-import { APIAuthentication, APIFactoryConfig, APIUser, Constructor, HttpStringMap, HttpStringMapMulti, ServerConfig } from './typings';
+import { APIAuthentication, APIFactoryConfig, APIUser, Constructor, HttpStringMap, HttpStringMapMulti, Promiseable, ServerConfig } from './typings';
 import { API, HttpError } from './api';
 import { Server as HTTPServer } from 'http';
 
@@ -68,9 +68,9 @@ function ErrorResponse(error: any) {
     return 'response' in error ? error.response : HttpError(error);
 }
 
-async function Authenticate(request: APIRequest, authentication?: readonly APIAuthentication[]): Promise<APIUser | void> {
+async function Authenticate(request: APIRequest, authentication?: readonly Promiseable<APIAuthentication>[]): Promise<APIUser | void> {
     if (authentication && authentication.length) {
-        for (const auth of authentication) {
+        for await (const auth of authentication) {
             if (auth.canAuthenticate(request)) {
                 const user = await auth.authenticate(request);
                 if (!user)

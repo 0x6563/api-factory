@@ -69,7 +69,7 @@ function ErrorResponse(error) {
 }
 async function Authenticate(request, authentication) {
     if (authentication && authentication.length) {
-        for (const auth of authentication) {
+        for await (const auth of authentication) {
             if (auth.canAuthenticate(request)) {
                 const user = await auth.authenticate(request);
                 if (!user)
