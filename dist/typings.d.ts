@@ -7,7 +7,7 @@ export interface ServerConfig {
     port: number;
     cors?: CORS;
     ssl?: ServerOptions;
-    authentication?: readonly Promiseable<APIAuthentication>[];
+    authentication?: Promiseable<APIAuthentication>[];
 }
 export interface Route {
     id: string;
@@ -41,7 +41,7 @@ export interface APIAuthentication {
     authenticate(request: APIRequest): Promiseable<APIUser | undefined>;
 }
 export interface APIUser {
-    readonly type: string;
+    type: string;
     data?: any;
 }
 export declare type APICallback<T> = (request: APIRequestT<T>) => APIResponseT<T>;
@@ -56,7 +56,7 @@ declare type GetUserTypes<T> = T extends {
 declare type PromiseResult<T> = T extends Promise<infer U> ? U : T;
 export declare type Promiseable<T> = Promise<T> | T;
 export interface APIFactoryConfig {
-    authentication?: readonly Promiseable<APIAuthentication>[];
+    authentication?: Promiseable<APIAuthentication>[];
 }
 export interface Constructor<T> {
     new (): T;

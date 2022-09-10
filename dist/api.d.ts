@@ -1,7 +1,7 @@
 import { APIResponse } from "./server";
 import { APICallback, APIFactoryConfig, APIRequestT, APIResponseT, Constructor, HttpError, HttpStringMap, Promiseable } from "./typings";
 export declare abstract class API<T extends APIFactoryConfig = {}> {
-    abstract readonly config: T;
+    abstract config: T;
     constructor();
     abstract run(request: APIRequestT<T>): APIResponseT<T>;
     onError(request: APIRequestT<T>, error: any): APIResponseT<T> | Promiseable<void>;

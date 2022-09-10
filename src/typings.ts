@@ -7,7 +7,7 @@ export interface ServerConfig {
     port: number;
     cors?: CORS;
     ssl?: ServerOptions
-    authentication?: readonly Promiseable<APIAuthentication>[];
+    authentication?: Promiseable<APIAuthentication>[];
 
 }
 
@@ -46,7 +46,7 @@ export interface APIAuthentication {
 
 
 export interface APIUser {
-    readonly type: string;
+    type: string;
     data?: any;
 }
 
@@ -60,7 +60,7 @@ type PromiseResult<T> = T extends Promise<infer U> ? U : T;
 export type Promiseable<T> = Promise<T> | T;
 
 export interface APIFactoryConfig {
-    authentication?: readonly Promiseable<APIAuthentication>[];
+    authentication?: Promiseable<APIAuthentication>[];
 }
 
 export interface Constructor<T> {

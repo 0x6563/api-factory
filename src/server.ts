@@ -68,7 +68,7 @@ function ErrorResponse(error: any) {
     return 'response' in error ? error.response : HttpError(error);
 }
 
-async function Authenticate(request: APIRequest, authentication?: readonly Promiseable<APIAuthentication>[]): Promise<APIUser | void> {
+async function Authenticate(request: APIRequest, authentication?: Promiseable<APIAuthentication>[]): Promise<APIUser | void> {
     if (authentication && authentication.length) {
         for await (const auth of authentication) {
             if (auth.canAuthenticate(request)) {
