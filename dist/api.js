@@ -4,7 +4,9 @@ exports.HttpError = exports.APIFactory = exports.API = void 0;
 class API {
     constructor() { }
     onError(request, error) { }
-    static Factory(config, run) {
+    static Factory(a, b) {
+        const config = typeof a == 'function' ? {} : a;
+        const run = typeof a == 'function' ? a : b;
         return class extends API {
             config = config;
             run = run;

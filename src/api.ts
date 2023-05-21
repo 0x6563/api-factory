@@ -7,7 +7,12 @@ export abstract class API<T extends APIFactoryConfig = {}> {
     abstract run(request: APIRequestT<T>): APIResponseT<T>;
     onError(request: APIRequestT<T>, error: any): APIResponseT<T> | Promiseable<void> { }
 
-    static Factory<T extends APIFactoryConfig>(config: T, run: APICallback<T>): Constructor<API<T>> {
+
+    static Factory<T extends APIFactoryConfig>(run: APICallback<T>): Constructor<API<T>>;
+    static Factory<T extends APIFactoryConfig>(config: T, run: APICallback<T>): Constructor<API<T>>;
+    static Factory<T extends APIFactoryConfig>(a: T | APICallback<T>, b?: APICallback<T>): Constructor<API<T>> {
+        const config = typeof a == 'function' ? {} as T : a as T;
+        const run = typeof a == 'function' ? a : b;
         return class extends API<T> {
             config = config;
             run = run;

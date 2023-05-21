@@ -1,7 +1,7 @@
 # API Factory
 
 ## Description
-API Factory's primary goal is to create a quick and easy way to host APIs.
+API Factory's primary goal is to create a quick and easy way to host APIs. It's not comprehensive. It's just handles basic use cases.
 
 ## Example
 Below is an example copied from `mock.server.ts`

@@ -49,7 +49,7 @@ function Invoke(API: Constructor<API<any>>) {
         try {
             (request as any).user = await Authenticate(request, config.authentication);
             const result = await api.run(request as any);
-            response = !APIResponse.IsResponse(result) ? { body: result } : result;
+            response = !APIResponse.IsResponse(result) ? new APIResponse({ body: result }) : result;
         } catch (error: any) {
             if (typeof api.onError == 'function') {
                 response = (await api.onError(request as any, error)) || ErrorResponse(error);
