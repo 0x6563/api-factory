@@ -72,6 +72,7 @@ async function Authenticate(request: APIRequest, authentication?: Promiseable<AP
     if (authentication && authentication.length) {
         for await (const auth of authentication) {
             if (auth.canAuthenticate(request)) {
+                console.log('Attempting Auth using: ' + auth?.constructor?.name);
                 const user = await auth.authenticate(request);
                 if (!user)
                     throw HttpError(401, {}, 'Not Authorized');
