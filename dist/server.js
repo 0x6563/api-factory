@@ -128,18 +128,16 @@ class APIRequest {
 }
 exports.APIRequest = APIRequest;
 class APIResponse {
-    static #$Key = Symbol('Response');
-    static IsResponse(response) {
-        return response.$key === APIResponse.#$Key;
-    }
-    $key = APIResponse.#$Key;
     body = '';
     statusCode = 200;
     headers = {};
     constructor({ statusCode, headers, body }) {
-        this.statusCode = statusCode ?? 200;
-        this.headers = headers ?? {};
-        this.body = body ?? '';
+        this.statusCode = statusCode ?? this.statusCode;
+        this.headers = headers ?? this.headers;
+        this.body = body ?? this.body;
+    }
+    static IsResponse(response) {
+        return response instanceof APIResponse;
     }
 }
 exports.APIResponse = APIResponse;

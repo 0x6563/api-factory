@@ -18,11 +18,13 @@ export declare class APIRequest<T = undefined> {
     get json(): any;
 }
 export declare class APIResponse {
-    #private;
+    body: string;
+    statusCode: number;
+    headers: HttpStringMap;
+    constructor({ statusCode, headers, body }: {
+        body?: string;
+        statusCode?: number;
+        headers?: HttpStringMap;
+    });
     static IsResponse(response: APIResponse): boolean;
-    $key?: Symbol;
-    body?: string;
-    statusCode?: number;
-    headers?: HttpStringMap;
-    constructor({ statusCode, headers, body }: APIResponse);
 }

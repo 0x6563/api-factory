@@ -134,19 +134,18 @@ export class APIRequest<T = undefined>  {
 }
 
 export class APIResponse {
-    static #$Key: Symbol = Symbol('Response');
-    static IsResponse(response: APIResponse) {
-        return response.$key === APIResponse.#$Key;
+    body: string = '';
+    statusCode: number = 200;
+    headers: HttpStringMap = {};
+
+    constructor({ statusCode, headers, body }: { body?: string, statusCode?: number, headers?: HttpStringMap }) {
+        this.statusCode = statusCode ?? this.statusCode;
+        this.headers = headers ?? this.headers;
+        this.body = body ?? this.body;
     }
 
-    $key?= APIResponse.#$Key;
-    body?: string = '';
-    statusCode?: number = 200;
-    headers?: HttpStringMap = {};
-    constructor({ statusCode, headers, body }: APIResponse) {
-        this.statusCode = statusCode ?? 200;
-        this.headers = headers ?? {};
-        this.body = body ?? '';
+    static IsResponse(response: APIResponse) {
+        return response instanceof APIResponse;
     }
 }
 
