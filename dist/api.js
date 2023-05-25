@@ -3,7 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.HttpError = exports.APIFactory = exports.API = void 0;
 class API {
     constructor() { }
-    onError(request, error) { }
+    onError(request, error) {
+        console.log(error);
+    }
     static Factory(a, b) {
         const config = typeof a == 'function' ? {} : a;
         const run = typeof a == 'function' ? a : b;
