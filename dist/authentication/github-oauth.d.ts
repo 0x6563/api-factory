@@ -1,7 +1,13 @@
 import { APIRequest } from "../server";
 import { APIAuthentication } from "../typings";
 export declare class GitHubOAuth implements APIAuthentication {
-    private config;
+    config: {
+        clientId: string;
+        clientSecret: string;
+        prefix?: string;
+        getCode?: (request: APIRequest) => string;
+        canAuthenticate?: (request: APIRequest) => boolean;
+    };
     private prefix;
     constructor(config: {
         clientId: string;

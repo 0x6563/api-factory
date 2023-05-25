@@ -3,7 +3,7 @@ import { APIAuthentication } from "../typings";
 
 export class GitHubOAuth implements APIAuthentication {
     private prefix = '';
-    constructor(private config: {
+    constructor(public config: {
         clientId: string;
         clientSecret: string;
         prefix?: string;
